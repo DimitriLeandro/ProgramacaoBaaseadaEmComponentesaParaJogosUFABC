@@ -9,6 +9,25 @@ public class GameManager : MonoBehaviour
     public GameObject letra; 
     public GameObject centro; 
 
+    private string[] palavrasOcultas = new string[] {
+        "carro", 
+        "elefante", 
+        "futebol",
+        "girafa",
+        "prato",
+        "girassol",
+        "escola",
+        "parque",
+        "bola",
+        "casa",
+        "aviao",
+        "maquina",
+        "castelo",
+        "sapatenis",
+        "estrela",
+        "planeta",
+        "facil"
+    };
     private int numTentativas; 
     private int maxNumTentativas; 
     private string palavraOculta = ""; 
@@ -23,10 +42,10 @@ public class GameManager : MonoBehaviour
         centro = GameObject.Find("centroDaTela");
         InitGame();
         InitLetras();
-        // numTentativas = 0;
-        // maxNumTentativas = 10;
-        // UpdateNumTentativas();
-        // UpdateScore();
+        numTentativas = 0;
+        maxNumTentativas = 10;
+        UpdateNumTentativas();
+        UpdateScore();
     }
 
     void Update()
@@ -48,7 +67,8 @@ public class GameManager : MonoBehaviour
 
     void InitGame()
     {
-        palavraOculta = "Dimitri"; //PegaUmaPalavraDoArquivo();
+        int numeroAleatorio = Random.Range(0, palavrasOcultas.Length);
+        palavraOculta = palavrasOcultas[numeroAleatorio];
         tamanhoPalavraOculta = palavraOculta.Length; 
         palavraOculta = palavraOculta.ToUpper(); 
         letrasOcultas = new char[tamanhoPalavraOculta];
@@ -65,13 +85,13 @@ public class GameManager : MonoBehaviour
 
             if(letraTecladaComoInt >= 97 && letraTecladaComoInt <= 122)
             {
-                // numTentativas++;
-                // UpdateNumTentativas();
+                numTentativas++;
+                UpdateNumTentativas();
 
-                // if(numTentativas > maxNumTentativas)
-                // {
-                //     SceneManager.LoadScene("Lab1_forca");
-                // }
+                if(numTentativas >= maxNumTentativas)
+                {
+                    SceneManager.LoadScene("Lab1_forca");
+                }
 
                 for (int i=0; i<=tamanhoPalavraOculta; i++)
                 {
@@ -82,11 +102,11 @@ public class GameManager : MonoBehaviour
                         {
                             letrasDescobertas[i] = true;
                             GameObject.Find("letra" + (i+1)).GetComponent<Text>().text = letraTeclada.ToString();
-                            // score = PlayerPrefs.GetInt("score");
-                            // score++;
-                            // PlayerPrefs.SetInt("score", score);
-                            // UpdateScore();
-                            // VerificaSePalavraDescoberta();
+                            score = PlayerPrefs.GetInt("score");
+                            score++;
+                            PlayerPrefs.SetInt("score", score);
+                            UpdateScore();
+                            VerificaSePalavraDescoberta();
                         }
                     }
                 }
@@ -94,37 +114,28 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    // void UpdateNumTentativas()
-    // {
-    //     GameObject.Find("numTentativas").GetComponent<Text>().text = numTentativas + " | " + maxNumTentativas;
-    // }
+    void UpdateNumTentativas()
+    {
+        GameObject.Find("numTentativas").GetComponent<Text>().text = "Tentativas: " + numTentativas + "/" + maxNumTentativas;
+    }
 
-    // void UpdateScore()
-    // {
-    //     GameObject.Find("scoreUI").GetComponent<Text>().text = "Score " + score;
-    // }
+    void UpdateScore()
+    {
+        GameObject.Find("scoreUI").GetComponent<Text>().text = "Score: " + score;
+    }
 
-    // void VerificaSePalavraDescoberta()
-    // {
-    //     bool condicao = true;
+    void VerificaSePalavraDescoberta()
+    {
+        bool condicao = true;
 
-    //     for(int i = 0; i < tamanhoPalavraOculta; i++)
-    //     {
-    //         condicao = condicao && letrasDescobertas[i];
-    //     }
-    //     if(condicao)
-    //     {
-    //         PlayerPrefs.SetString("ultimaPalavraOculta", palavraOculta);
-    //         SceneManager.LoadScene("Lab1_salvo");
-    //     }
-    // }
-
-    // string PegaUmaPalavraDoArquivo()
-    // {
-    //     TextAsset t1 = (TextAsset)Resources.Load("palavras", typeof(TextAsset));
-    //     string s = t1.text;
-    //     string[] palavras = s.Split(' ');
-    //     int palavraAleatoria = Random.Range(0, palavras.Length + 1);
-    //     return (palavras[palavraAleatoria]);
-    // }
+        for(int i = 0; i < tamanhoPalavraOculta; i++)
+        {
+            condicao = condicao && letrasDescobertas[i];
+        }
+        if(condicao)
+        {
+            PlayerPrefs.SetString("ultimaPalavraOculta", palavraOculta);
+            SceneManager.LoadScene("Lab1_salvo");
+        }
+    }
 }
